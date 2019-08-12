@@ -1,65 +1,67 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class playerMovement : MonoBehaviour
 {
 
-    CharacterController characterController;
+    Rigidbody rigidbody;
 
     public int score;
     public int updatedScore;
 
-    public float movementSpeed = 6.0f;
-    public float floating = 0.5f;
+    public float movementSpeed = 1.0f;
+    public float floating = 0.2f;
     public float gravity = 10f;
 
-   
-
-    private Vector3 directionalMovement = Vector3.zero;
-
-    
     // Start is called before the first frame update
     void Start()
     {
 
-        score = 10;
+        rigidbody = GetComponent<Rigidbody>();
 
-        float moveUP = floating + 5.0f;
-
-        characterController = GetComponent<CharacterController>();
-
+        
 
     }
 
     // Update is called once per frame
-    void Update()
-    {
-
-        float moveUP = floating + 5.0f;
-
-        if (characterController.isGrounded)
-        {
-            score = (score - 1);
-        }
-
-        if (Input.GetButton("Jump") == true)
-        {
-            directionalMovement.y = moveUP;
-        }
-
-        directionalMovement = new Vector3(Input.GetAxis("Horizontal"), 0.0f, Input.GetAxis("Vertical"));
-
-       // directionalMovement.y -= gravity * Time.deltaTime;
-
-        characterController.Move(directionalMovement * Time.deltaTime);
-        
-
-
-    }
-
     void FixedUpdate()
     {
+        float moveHorizontal = Input.GetAxis("Horizontal");
+        float moveVertical = Input.GetAxis("Vertical");
+
+        Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
         
+        Vector3 movement1 = rigidbody.transform.rotation * Vector3.forward;
+
+        
+
+        rigidbody.AddForce(movement * movementSpeed);
+       // transform.position += transform.forward * Time.deltaTime * movementSpeed;
+        if (Input.GetButton("Jump"))
+        {
+            rigidbody.AddForce(transform.up * floating);
+        }
+
+        if (Input.GetButton("Sink"))
+        {
+            rigidbody.AddForce(transform.up * -floating);
+        }
+
+        
+
+
     }
+    void OnCollisionEnter(Collision collision)
+    {
+
+        if (collision.gameObject.tag == "walls")
+        {
+            score = score - 1;
+        }
+
+    }
+
 }
