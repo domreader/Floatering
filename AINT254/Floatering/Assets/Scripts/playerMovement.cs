@@ -7,11 +7,12 @@ using UnityEngine.SceneManagement;
 public class playerMovement : MonoBehaviour
 {
 
-    Rigidbody rigidbody;
+    new Rigidbody rigidbody;
 
     public int score;
     public int updatedScore;
-
+    public bool enter = true;
+    public bool win = true;
     public float movementSpeed = 1.0f;
     public float floating = 0.2f;
     public float gravity = 10f;
@@ -22,11 +23,9 @@ public class playerMovement : MonoBehaviour
 
         rigidbody = GetComponent<Rigidbody>();
 
-        
-
     }
+    
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         float moveHorizontal = Input.GetAxis("Horizontal");
@@ -50,18 +49,20 @@ public class playerMovement : MonoBehaviour
             rigidbody.AddForce(transform.up * -floating);
         }
 
-        
-
 
     }
-    void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-
-        if (collision.gameObject.tag == "walls")
+        if (other.gameObject.tag == "walls")
         {
-            score = score - 1;
+            SceneManager.LoadScene("loseScreen");
         }
 
+        if(other.gameObject.tag == "greenWall")
+        {
+            SceneManager.LoadScene("winScreen");
+        }
     }
 
+    
 }
